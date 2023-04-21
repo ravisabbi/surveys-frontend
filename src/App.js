@@ -1,45 +1,36 @@
- 
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import Home  from "./components/HomePage";
+import UserHome from "./components/UserHome";
+import AdminHome from "./components/AdminHome";
 import LoginPage from "./components/LoginPage/LoginPage";
 import SignUpPage from "./components/SignUpPage/SignUpPage";
-//import Dashbord from "./components/Dashboard/Dashboard";
+import UserProtectedRoute from "./components/UserProtectedRoute";
+import Cookies from "js-cookie";
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 
 function App() {
+  const role = Cookies.get("role");
+  console.log("user", role);
   return (
-    <>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signUp" element={<SignUpPage />} />
-        <Route path="/" element={<Home/>} />
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/login" exact element={<LoginPage />} />
+       <Route path="/signUp" exact element={<SignUpPage />} /> 
+      <Route
+        path="/"
+        element={
+          role === "user" ? (
+            <UserProtectedRoute>
+              <UserHome />
+            </UserProtectedRoute>
+          ) : (
+            <AdminProtectedRoute>
+              <AdminHome />
+            </AdminProtectedRoute>
+          )
+        }
+      />
+    </Routes>
   );
 }
 
 export default App;
-// onSubmit: (values) => {
-//   axios.post("/login",formik.values).then((response) => {
-//    setErrorMsg("");
-//    console.log(response.data)
-//    if(response.statusText === "OK"){
-//      console.log("LogIn");
-//      navigate("/",{replace:true});
-//    }
-//    formik.resetForm();
-//    const {jwtToken} = response.data;
-//    Cookies.set("jwt_token",jwtToken,{expires:10});
-//   })
-//   .catch((e) => {
-//    setErrorMsg(e.response.data.msg);
-//    console.log(e.response.data.msg);
-//   })
-// },
-
-// const navigate = useNavigate();
-//   const [showPassword, setshowPassword] = useState(false);
-//   const [errMsg,setErrorMsg] = useState("");
-//   const togglePasswordVisibility = () => {
-//     setshowPassword(!showPassword);
-//   };

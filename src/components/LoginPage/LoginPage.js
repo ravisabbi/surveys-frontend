@@ -35,18 +35,19 @@ const LoginPage = () => {
         .post("/login", formik.values)
         .then((response) => {
           setErrorMsg("");
-          console.log(response.data);
+          // console.log(response);
+          // console.log(response.data);
           if (response.statusText === "OK") {
-            console.log("LogIn");
-            navigate("/", { replace: true });
             console.log(response.data);
             const { jwt_token, user_details } = response.data;
+            console.log(user_details.role);
             Cookies.set("jwtToken", jwt_token, { expires: 10 });
-            Cookies.set("userDetails", JSON.stringify(user_details), {
+          
+            Cookies.set("role",user_details.role, {
               expires: 10,
             });
-            const ud = JSON.parse(Cookies.get("userDetails"));
-            console.log(ud);
+             
+            navigate("/", { replace: true });
           }
           formik.resetForm();
         })
@@ -63,12 +64,12 @@ const LoginPage = () => {
         <h1>Login</h1>
         <form onSubmit={formik.handleSubmit}>
           <div className="form-control">
-            <label htmlFor="userName">UserName</label>
+            <label htmlFor="userName">Username</label>
             <input
               type="text"
               id="userName"
               {...formik.getFieldProps("userName")}
-              placeholder="Enter userName"
+              placeholder="Enter username"
             />
             {formik.touched.userName && formik.errors.userName ? (
               <div className="error">{formik.errors.userName}</div>

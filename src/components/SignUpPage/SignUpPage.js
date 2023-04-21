@@ -91,11 +91,11 @@ const SignUpPage = () => {
         <form onSubmit={formik.handleSubmit}>
           {/* firstName */}
           <div className="form-control">
-            <label htmlFor="firstName">FirstName</label>
+            <label htmlFor="firstName">Firstname</label>
             <input
               type="text"
               {...formik.getFieldProps("firstName")}
-              placeholder="Enter FirstName"
+              placeholder="Enter Firstname"
             />
             {formik.touched.firstName && formik.errors.firstName ? (
               <div className="error">{formik.errors.firstName}</div>
@@ -103,11 +103,11 @@ const SignUpPage = () => {
           </div>
           {/* lastName */}
           <div className="form-control">
-            <label htmlFor="lastName">LastName</label>
+            <label htmlFor="lastName">Lastname</label>
             <input
               type="text"
               {...formik.getFieldProps("lastName")}
-              placeholder="Enter LastName"
+              placeholder="Enter Lastname"
             />
             {formik.touched.lastName && formik.errors.lastName ? (
               <div className="error">{formik.errors.lastName}</div>
@@ -115,12 +115,12 @@ const SignUpPage = () => {
           </div>
           {/* username */}
           <div className="form-control">
-            <label htmlFor="userName">UserName</label>
+            <label htmlFor="userName">Username</label>
             <input
               type="text"
               id="userName"
               {...formik.getFieldProps("userName")}
-              placeholder="Enter UserName"
+              placeholder="Enter Username"
             />
             {formik.touched.userName && formik.errors.userName ? (
               <div className="error">{formik.errors.userName}</div>
