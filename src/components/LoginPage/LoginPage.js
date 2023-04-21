@@ -1,37 +1,20 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Cookies from "js-cookie";
 import "./LoginPage.css";
-//import axios from "axios";
-import { Link, useNavigate} from "react-router-dom";
+import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import axios from "axios";
 
-//Formik Error Validation
-const validate = (values) => {
-  const errors = {};
-
-  if (!values.userName) {
-    errors.userName = "Enter UserName";
-  }
-
-  if (!values.password) {
-    errors.password = "Enter Password";
-  } else if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(values.password)) {
-    errors.password =
-      "Password should have at least 8 characters, one uppercase letter, one lowercase letter, and one number";
-  }
-
-  return errors;
-};
-
-const LoginPageMain = () => {
-  const navigate = useNavigate();
+const LoginPage = () => {
   const [showPassword, setshowPassword] = useState(false);
-  const [errMsg,setErrorMsg] = useState("");
+  const [errMsg, setErrorMsg] = useState("");
   const togglePasswordVisibility = () => {
     setshowPassword(!showPassword);
   };
+
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -39,23 +22,38 @@ const LoginPageMain = () => {
       password: "",
     },
 
-    validate,
+    validationSchema: Yup.object({
+      userName: Yup.string()
+        //.min(3, "Username should be at least 3 characters long.")
+        .required("Required*"),
+      password: Yup.string()
+        //.min(8, "password should be at least 8 characters long.")
+        .required("Required*"),
+    }),
     onSubmit: (values) => {
-       axios.post("/login",formik.values).then((response) => {
-        setErrorMsg("");
-        console.log(response.data)
-        if(response.statusText === "OK"){
-          console.log("LogIn");
-          navigate("/",{replace:true});
-        }
-        formik.resetForm();
-        const {jwtToken} = response.data;
-        Cookies.set("jwt_token",jwtToken,{expires:10});
-       })
-       .catch((e) => {
-        setErrorMsg(e.response.data.msg);
-        console.log(e.response.data.msg);
-       })
+      axios
+        .post("/login", formik.values)
+        .then((response) => {
+          setErrorMsg("");
+          console.log(response.data);
+          if (response.statusText === "OK") {
+            console.log("LogIn");
+            navigate("/", { replace: true });
+            console.log(response.data);
+            const { jwt_token, user_details } = response.data;
+            Cookies.set("jwtToken", jwt_token, { expires: 10 });
+            Cookies.set("userDetails", JSON.stringify(user_details), {
+              expires: 10,
+            });
+            const ud = JSON.parse(Cookies.get("userDetails"));
+            console.log(ud);
+          }
+          formik.resetForm();
+        })
+        .catch((e) => {
+          setErrorMsg(e.response.data.msg);
+          console.log(e.response.data.msg);
+        });
     },
   });
   //console.log(formik.values);
@@ -69,22 +67,21 @@ const LoginPageMain = () => {
             <input
               type="text"
               id="userName"
-              onChange={formik.handleChange}
-              value={formik.values.userName}
+              {...formik.getFieldProps("userName")}
               placeholder="Enter userName"
             />
-            <div className="errors">
-              <p className="error">{formik.errors.userName}</p>
-            </div>
+            {formik.touched.userName && formik.errors.userName ? (
+              <div className="error">{formik.errors.userName}</div>
+            ) : null}
           </div>
           <div className="form-control">
             <label htmlFor="password">Password</label>
             <div className="password-row">
               <input
+                className="password-input"
                 type={showPassword ? "text" : "password"}
                 id="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
+                {...formik.getFieldProps("password")}
                 placeholder="Enter password"
               />
               <div
@@ -95,17 +92,17 @@ const LoginPageMain = () => {
               </div>
             </div>
 
-            <div className="errors">
-              <p className="error">{formik.errors.password}</p>
-            </div>
+            {formik.touched.password && formik.errors.password ? (
+              <div className="error">{formik.errors.password}</div>
+            ) : null}
           </div>
           <button type="submit">Login</button>
         </form>
-        <p className="error" >{errMsg}</p>
+        <p className="login-errMsg">{errMsg}</p>
         {/* {formik.values && <p>Login successful!</p>} */}
         <Link to="/signUp">
           <div className="signIn-routing-button">
-            <p>signIn</p>
+            <p className="signup-link">signUp</p>
           </div>
         </Link>
       </div>
@@ -113,4 +110,4 @@ const LoginPageMain = () => {
   );
 };
 
-export default LoginPageMain;
+export default LoginPage;

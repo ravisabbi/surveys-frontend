@@ -1,60 +1,26 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-//import { useNavigate } from "react-router-dom";
-// import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
+import * as Yup from "yup";
+// import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { v4 } from "uuid";
+// import axios from "axios";
 import "./signUpPage.css";
-import { Link } from "react-router-dom";
-
-//Formik Error Validation
-// export const url = {
-//   API: "http://192.168.0.2:5000/",
-//   domain: "http://localhost:3002/",
-// };
-
-// export const url = {
-//   API: "*",
-//   domain: "*",
-// };
-
-const validate = (values) => {
-  const errors = {};
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!values.firstName) {
-    errors.firstName = "Enter FirstName";
-  }
-  if (!values.lastName) {
-    errors.lastName = "Enter LastName";
-  }
-  if (!values.userName) {
-    errors.userName = "Enter UserName";
-  } else if (!/^[a-zA-Z0-9_]*$/.test(values.userName)) {
-    errors.userName = "Dont Use Special Characters";
-  }
-
-  if (!values.email) {
-    errors.email = "Enter Email";
-  } else if (!emailRegex.test(values.email)) {
-    errors.email = "Please Enter a Valid Email";
-  }
-
-  if (!values.password) {
-    errors.password = "Enter Password";
-  } else if (!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/.test(values.password)) {
-    errors.password =
-      "Password should have at least 8 characters, one uppercase letter, one lowercase letter, and one number";
-  }
-
-  return errors;
-};
+import { Link ,useNavigate} from "react-router-dom";
+import axios from "axios";
 
 const SignUpPage = () => {
-  //const naviagte = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [submitMsg, setSubmitMsg] = useState("");
+  console.log(submitMsg);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+   const naviagte = useNavigate();
   const formik = useFormik({
     initialValues: {
+      id: v4(),
       firstName: "",
       lastName: "",
       email: "",
@@ -62,9 +28,36 @@ const SignUpPage = () => {
       userName: "",
       action: true,
     },
-
-    validate,
+    // validation
+    validationSchema: Yup.object({
+      userName: Yup.string()
+        .min(3, "Username should be at least 3 characters long.")
+        .required("Required*"),
+      password: Yup.string()
+        .min(8, "password should be at least 8 characters long.")
+        .matches(
+          "((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{6,}))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,}))",
+          "needed one (upperCase,lowercase,symbol)"
+        )
+        .required("Required*"),
+      firstName: Yup.string()
+        .min(3, "Fullname Should be at least 5 charactes")
+        .matches("^[A-Za-z]+(?:[A-Za-z]+)?$","needed alphabets only")
+        .required("Required*"),
+      lastName: Yup.string()
+        .min(3, "Fullname Should be at least 5 charactes")
+        .matches("^[A-Za-z]+(?:[A-Za-z]+)?$","needed alphabets only")
+        .required("Required*"),
+      email: Yup.string()
+        .email("invalid email id")
+        .matches(
+          "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
+          "Invalid Email"
+        )
+        .required("Required*"),
+    }),
     onSubmit: (values) => {
+      console.log(values);
       values.role = "user"
       //console.log(values);
       console.log(values);
@@ -75,7 +68,7 @@ const SignUpPage = () => {
           if (response.statusText === "OK") {
             // Redirect to dashboard on successful login
             setSubmitMsg(response.data.msg);
-            //naviagte("/dashboard", { replace: true });
+            naviagte("/login", { replace: true });
 
             console.log("User Created");
 
@@ -101,28 +94,24 @@ const SignUpPage = () => {
             <label htmlFor="firstName">FirstName</label>
             <input
               type="text"
-              id="firstName"
-              onChange={formik.handleChange}
-              value={formik.values.firstName}
+              {...formik.getFieldProps("firstName")}
               placeholder="Enter FirstName"
             />
-            <div className="errors">
-              <p className="error">{formik.errors.firstName}</p>
-            </div>
+            {formik.touched.firstName && formik.errors.firstName ? (
+              <div className="error">{formik.errors.firstName}</div>
+            ) : null}
           </div>
           {/* lastName */}
           <div className="form-control">
             <label htmlFor="lastName">LastName</label>
             <input
               type="text"
-              id="lastName"
-              onChange={formik.handleChange}
-              value={formik.values.lastName}
+              {...formik.getFieldProps("lastName")}
               placeholder="Enter LastName"
             />
-            <div className="errors">
-              <p className="error">{formik.errors.lastName}</p>
-            </div>
+            {formik.touched.lastName && formik.errors.lastName ? (
+              <div className="error">{formik.errors.lastName}</div>
+            ) : null}
           </div>
           {/* username */}
           <div className="form-control">
@@ -130,13 +119,12 @@ const SignUpPage = () => {
             <input
               type="text"
               id="userName"
-              onChange={formik.handleChange}
-              value={formik.values.userName}
+              {...formik.getFieldProps("userName")}
               placeholder="Enter UserName"
             />
-            <div className="errors">
-              <p className="error">{formik.errors.userName}</p>
-            </div>
+            {formik.touched.userName && formik.errors.userName ? (
+              <div className="error">{formik.errors.userName}</div>
+            ) : null}
           </div>
           {/* Email Div */}
           <div className="form-control">
@@ -144,51 +132,48 @@ const SignUpPage = () => {
             <input
               type="text"
               id="email"
-              onChange={formik.handleChange}
-              value={formik.values.email}
+              {...formik.getFieldProps("email")}
               placeholder="Enter email"
             />
-            <div className="errors">
-              <p className="error">{formik.errors.email}</p>
-            </div>
+            {formik.touched.email && formik.errors.email ? (
+              <div className="error">{formik.errors.email}</div>
+            ) : null}
           </div>
           {/* PasswordDiv */}
           <div className="form-control">
             <label htmlFor="password">Password</label>
             <div className="password-row">
               <input
-                type="password"
+              className="password-input"
+                type={showPassword ? "text" : "password"}
                 id="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
+                {...formik.getFieldProps("password")}
                 placeholder="Enter password"
               />
               <div
                 className="icon-container"
-                // onClick={togglePasswordVisibility}
-              >
-                {/* {showPassword ? <FaEyeSlash /> : <FaEye />} */}
+                onClick={togglePasswordVisibility}>
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </div>
             </div>
 
-            <div className="errors">
-              <p className="error">{formik.errors.password}</p>
-            </div>
+            {formik.touched.password && formik.errors.password ? (
+              <div className="error">{formik.errors.password}</div>
+            ) : null}
           </div>
 
           <button type="submit">SignUp</button>
+          <p className="signup-submit-msg">{submitMsg}</p>
         </form>
         <Link to="/login">
           <div className="signIn-routing-button">
             <p>LogIn</p>
           </div>
         </Link>
-        <p className="error">{submitMsg}</p>
-
-        {/* {isSubmitted && <p>Login successful!</p>} */}
       </div>
     </div>
   );
 };
 
 export default SignUpPage;
+ 
