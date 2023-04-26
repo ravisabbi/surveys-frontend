@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { v4 } from "uuid";
 // import axios from "axios";
-import "./signUpPage.css";
+//import "./signUpPage.css";
 import { Link ,useNavigate} from "react-router-dom";
 import axios from "axios";
 
