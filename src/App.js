@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React,{useEffect} from "react";
+import { Routes, Route ,useNavigate,Navigate} from "react-router-dom";
 import UserHome from "./components/UserHome";
 import AdminHome from "./components/AdminHome";
 import LoginPage from "./components/LoginPage/LoginPage";
@@ -13,12 +13,15 @@ import NotFound from "./components/NotFound/NotFound";
 function App() {
   const role = Cookies.get("role");
   console.log("user", role);
+  const navigate = useNavigate();
+ 
+
   return (
     <Routes>
       <Route path="/login" exact element={<LoginPage />} />
        <Route path="/signUp" exact element={<SignUpPage />} /> 
        <Route path="/surveyF/:surveyId" exact element={<Survey />} /> 
-       <Route path="/notfound" exact element={<NotFound />} /> 
+     
       <Route
         path="/"
         element={
@@ -33,6 +36,10 @@ function App() {
           )
         }
       />
+    
+      <Route path="/badPath" element={<NotFound />} />
+      <Route path="*" element={<Navigate to="/badPath" />} />
+       
     </Routes>
   );
 }

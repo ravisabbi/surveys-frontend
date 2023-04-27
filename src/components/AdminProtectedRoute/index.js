@@ -9,9 +9,9 @@ const AdminProtectedRoute = (props) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const role = Cookies.get("role");
-  const checkUserToken = () => {
+  const checkAccessToken = () => {
     const userToken = Cookies.get("jwtToken");
-    if (!userToken || userToken === "undefined") {
+    if (userToken === undefined) {
       setIsLoggedIn(false);
       return navigate("/login");
     }
@@ -24,7 +24,7 @@ const AdminProtectedRoute = (props) => {
     }
   };
   useEffect(() => {
-    checkUserToken();
+    checkAccessToken();
   }, [isLoggedIn]);
   return (
     <React.Fragment>
