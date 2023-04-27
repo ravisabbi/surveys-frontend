@@ -8,6 +8,7 @@ import UserProtectedRoute from "./components/UserProtectedRoute";
 import Cookies from "js-cookie";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import Survey from "./components/SurveyForm/SurveyForm";
+import NotFound from "./components/NotFound/NotFound";
 
 function App() {
   const role = Cookies.get("role");
@@ -16,7 +17,8 @@ function App() {
     <Routes>
       <Route path="/login" exact element={<LoginPage />} />
        <Route path="/signUp" exact element={<SignUpPage />} /> 
-       <Route path="/surveyForm/:surveyId" exact element={<Survey />} /> 
+       <Route path="/surveyF/:surveyId" exact element={<Survey />} /> 
+       <Route path="/notfound" exact element={<NotFound />} /> 
       <Route
         path="/"
         element={
