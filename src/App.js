@@ -30,9 +30,9 @@ function App() {
               <UserHome />
             </UserProtectedRoute>
           ) : (
-            <AdminProtectedRoute>
+            <UserProtectedRoute>
               <AdminHome />
-            </AdminProtectedRoute>
+            </UserProtectedRoute>
           )
         }
       />

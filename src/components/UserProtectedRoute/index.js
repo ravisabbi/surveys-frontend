@@ -11,7 +11,7 @@ const UserProtectedRoute = (props) => {
       setIsLoggedIn(false);
       return navigate("/login");
     }
-    if (isLoggedIn && role === "user") {
+    if (isLoggedIn && (role === "user" || role === "admin")) {
       return navigate("/");
     }
     setIsLoggedIn(true);
