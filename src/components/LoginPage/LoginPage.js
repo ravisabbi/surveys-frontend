@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useFormik } from "formik";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-//import "./LoginPage.css";
+import "./LoginPage.css";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -17,7 +17,16 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const accessToken = Cookies.get("jwtToken");
-  if (accessToken !== undefined) navigate("/", { replace: true });
+  // console.log("Ravi",accessToken,accessToken !== undefined)
+  //  if (accessToken !== undefined){
+  //   console.log("Please Navigate to home")
+  //   navigate("/", { replace: true })
+  // }
+  useEffect(() => {
+    if(accessToken){
+      navigate("/")
+    }
+  })
   const formik = useFormik({
     initialValues: {
       userName: "",

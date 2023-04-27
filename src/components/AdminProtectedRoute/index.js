@@ -1,33 +1,35 @@
+ 
+
+ 
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-
-const UserProtectedRoute = (props) => {
-  const role = Cookies.get("role");
-  console.log(role);
-
+const AdminProtectedRoute = (props) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const role = Cookies.get("role");
   const checkUserToken = () => {
-    const accessToken = Cookies.get("jwtToken");
-
-   // console.log("hello", accessToken);
-    if (!accessToken || accessToken === undefined) {
+    const userToken = Cookies.get("jwtToken");
+    if (!userToken || userToken === "undefined") {
       setIsLoggedIn(false);
-      navigate("/login");
-    } else {
+      return navigate("/login");
+    }
+    else{
       setIsLoggedIn(true);
     }
-
+     
     if (isLoggedIn && role === "admin") {
-      navigate("/", { replace: true });
+      return navigate("/");
     }
   };
-
   useEffect(() => {
     checkUserToken();
   }, [isLoggedIn]);
-  return <React.Fragment>{isLoggedIn ? props.children : null}</React.Fragment>;
+  return (
+    <React.Fragment>
+      {isLoggedIn && role === "admin" ? props.children : null}
+    </React.Fragment>
+  );
 };
-export default UserProtectedRoute;
+export default AdminProtectedRoute;
